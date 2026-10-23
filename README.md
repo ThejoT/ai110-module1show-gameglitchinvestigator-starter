@@ -1,10 +1,18 @@
-# 🎮 Game Glitch Investigator: The Impossible Guesser
+# 🎮 Game Glitch Detective: The Impossible Guess
 
-## 🎯 Game Purpose
+## 🎯 Game Goal
 
-Game Glitch Investigator is a number guessing game built with Streamlit. The game picks a secret number in a range set by the difficulty (Easy 1–20, Normal 1–100, Hard 1–200). The player guesses until they find it, using "Go HIGHER" / "Go LOWER" hints, within a limited number of attempts. Fewer guesses means a higher score.
+Game Glitch Investigator is a number guessing game built with Streamlit. The game chooses a secret number from a range based on the difficulty level:
 
-The starter code was written by an AI and was full of glitches. My job was to find the bugs, understand their causes, fix them, and prove the fixes with tests.
+| Difficulty | Range | Guesses |
+|------------|-------|---------|
+| Easy | 1–20 | 6 |
+| Normal | 1–100 | 8 |
+| Hard | 1–200 | 5 |
+
+The player has a set number of guesses to figure it out, using "Go HIGHER" or "Go LOWER" clues. Fewer guesses = a higher score.
+
+The first version of the code was written by AI, and it was full of bugs. My job was to find the bugs, figure out why they happened, fix them, and then verify the fixes by running tests.
 
 ## 🛠️ Setup
 
@@ -18,41 +26,47 @@ python -m pytest
 
 ## 🐞 Bugs Found
 
-Full details and a reproduction table are in [`reflection.md`](reflection.md) section 1. A trace of the original game is in [`bug_trace_before.txt`](bug_trace_before.txt).
+The original game trace is in [`bug_trace_before.txt`](bug_trace_before.txt). Section 1 of [`reflection.md`](reflection.md) has a reproduction table and full details.
 
-1. **Backwards hints:** guessing too high told you to "Go HIGHER" (`check_guess`).
-2. **Secret became a string on even attempts,** so `"9"` was treated as higher than `"50"` (submit block in `app.py`).
-3. **New Game didn't reset the game:** after winning or losing, the game stayed stuck on "You already won".
-4. **Off-by-one attempts:** `attempts` started at 1, so Normal gave 7 guesses instead of 8, and the "Attempts left" banner lagged behind.
-5. **Scoring rewarded wrong guesses:** "Too High" guesses earned +5 on even attempts (`update_score`).
-6. **Difficulty ranges were wrong:** Hard (1–50) was easier than Normal (1–100), and the banner always said 1–100.
-7. **Invalid input used up an attempt:** typing "abc" still counted as a guess.
+1. **Backwards hints:** when you guessed too high, you were told to "Go HIGHER" (`check_guess()`).
+2. **Secret turned into a string:** on even attempts, the secret was converted to a string, so `"9"` was treated as greater than `"50"` (submit block in `app.py`).
+3. **New Game didn't reset the game:** win or lose, the game stayed on the "You already won" screen.
+4. **Off-by-one attempts:** `attempts` started at 1, so Normal gave 7 guesses instead of 8, and the "Attempts left" banner lagged one guess behind.
+5. **Wrong guesses were rewarded:** "Too High" guesses earned +5 points on even tries (`update_score()`).
+6. **Wrong difficulty ranges:** Hard (1–50) was *easier* than Normal (1–100), and the banner always showed 1–100.
+7. **Invalid input wasted a guess:** typing `"abc"` used up an attempt.
 
-## 🔧 Fixes Applied
+## 🔧 Fixes Implemented
 
-- **Refactored** all game logic out of `app.py` into `logic_utils.py`, so it can be tested without Streamlit. `app.py` now only handles the UI and session state.
-- **`check_guess()`** always compares integers and returns just the outcome. A new **`get_hint_message()`** maps each outcome to the correct direction ("Too high! Go LOWER.").
+- **Refactor:** I moved all game logic out of `app.py` into `logic_utils.py` so it can be tested without Streamlit. Now `app.py` only handles the UI and session state.
+- **`check_guess()`** always compares integers and only returns the outcome. A new **`get_hint_message()`** function matches each outcome with its correct direction (e.g., `"📉 Too high! Go LOWER."`).
 - **Removed** the code that converted the secret to a string on even attempts.
-- **New `start_new_game()`** resets secret, attempts, score, status and history, using the current difficulty's range. It runs on first load, on New Game and when the difficulty changes.
-- **Attempts** start at 0 and are only counted for valid guesses. The banner is drawn last so "Attempts left" is always current.
-- **`update_score()`**: every wrong guess costs 5 points (but the score never drops below 0), and a first-try win is worth 100.
-- **Difficulty**: Hard is now 1–200, and the banner shows the real range.
-- **`parse_guess()`** rejects empty input, non-numbers, decimals (instead of silently truncating) and out-of-range numbers.
+- **`start_new_game()`** is a new function that resets the secret, attempts, score, status and history, using the range for the current difficulty. It runs on the first load, when you click New Game, and when the difficulty is changed.
+- **Attempts** start at 0 and only count valid guesses. The banner is drawn last, so "Attempts left" is always up to date.
+- **`update_score()`**: winning on the first try gives you 100 points, and each wrong guess costs 5 points (but the score can never go below 0):
+
+  ```python
+  if outcome in ("Too High", "Too Low"):
+      return max(0, current_score - 5)
+  ```
+
+- **Difficulty:** Hard is now 1–200, and the banner shows the real range for each difficulty.
+- **`parse_guess()`** rejects empty input, non-numbers, decimals (instead of silently truncating them) and out-of-range numbers.
 
 Each fix is marked with a `# FIX:` comment in the code.
 
 ## 📸 Demo Walkthrough
 
-A sample game on Normal (range 1–100, 8 attempts), with the secret number 50:
+A sample game on Normal (range 1–100, 8 attempts) with the secret number 50:
 
-1. The game starts and shows "Guess a number between 1 and 100. Attempts left: 8" and a score of 0.
-2. User enters a guess of **60**. The game shows "📉 Too high! Go LOWER." The score stays at 0 (it can't go below 0) and attempts left drops to 7.
-3. User enters **abc**. The game shows "That is not a whole number." No attempt is used (still 7 left).
-4. User enters **40**. The game shows "📈 Too low! Go HIGHER." Score is still 0, attempts left is 6.
-5. User enters **9**, which the old code wrongly called "too high". The game correctly shows "📈 Too low! Go HIGHER." Attempts left is 5.
-6. User enters **50**. Balloons appear and the game shows "You won! The secret was 50. Final score: 70." (A win on attempt 4 earns 100 − 30 = 70 points.)
-7. User clicks **New Game 🔁**. The score resets to 0, history clears, "Attempts left" goes back to 8, and a new secret is picked from 1–100.
-8. User switches to **Hard**. A new game starts automatically and the banner reads "Guess a number between 1 and 200. Attempts left: 5".
+1. The game begins by saying "Guess a number between 1 and 100. Attempts left: 8." The score is 0.
+2. The user types in a guess of **60**. The game says "📉 Too high! Go LOWER." The score stays at 0 (it can't go below 0), and the attempts left drop to 7.
+3. The user types **abc**. The game displays "That is not a whole number." No attempt is used; there are still 7 left.
+4. The user enters **40**. The game says "📈 Too low! Go HIGHER." The score is still 0, with 6 tries left.
+5. The user enters **9**. The old code wrongly called 9 "too high," but now the game shows the right message: "📈 Too low! Go HIGHER." There are 5 attempts left.
+6. The user enters **50**. The game says "You won!" and balloons go off. The secret was 50, and the final score is 70 (100 − 30 = 70 points for a win on the fourth try).
+7. The user clicks **New Game 🔁**. The history is cleared, the score resets to 0, "Attempts left" goes back to 8, and a new secret is chosen from 1–100.
+8. The user switches to **Hard**. A new game starts automatically, and the banner says "Guess a number between 1 and 200. Attempts left: 5."
 
 Terminal trace of the fixed game (same inputs as the original bug trace), also saved in [`game_trace_after.txt`](game_trace_after.txt):
 
@@ -80,7 +94,7 @@ Game 4: Hard difficulty range
 
 ## 🧪 Test Results
 
-`tests/test_game_logic.py` has 23 tests: the 3 starter tests, tests targeting each fixed bug, and edge-case tests for `parse_guess()`. Output is also saved in [`test_results.txt`](test_results.txt).
+There are 23 tests in [`tests/test_game_logic.py`](tests/test_game_logic.py): the 3 starter tests, tests for each fixed bug, and edge-case tests for `parse_guess()`. The output is also saved in [`test_results.txt`](test_results.txt).
 
 ```
 ============================= test session starts ==============================
@@ -119,4 +133,4 @@ tests/test_game_logic.py::test_surrounding_whitespace_is_ignored PASSED  [100%]
 
 ## 🚀 Stretch Features
 
-- [x] **Challenge 1: Advanced Edge-Case Testing.** Tests cover empty and whitespace-only input, non-numeric strings, decimals, negative numbers, numbers above the range, exact range boundaries and surrounding whitespace. Prompts and rationale are in [`ai_interactions.md`](ai_interactions.md).
+- [x] **Challenge 1: Advanced Edge-Case Testing.** These tests cover empty and whitespace-only input, non-numeric strings, decimals, negative numbers, numbers above the range, exact range boundaries and surrounding whitespace. The prompts and rationale are in [`ai_interactions.md`](ai_interactions.md).
