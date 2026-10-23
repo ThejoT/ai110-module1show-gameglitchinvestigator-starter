@@ -3,13 +3,13 @@ Game Glitch Investigator: trace of the FIXED game (same inputs as bug_trace_befo
 
 Game 1: Normal, secret=50
   start: Guess a number between 1 and 100. Attempts left: 8
-  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=-5 status=playing | Guess a number between 1 and 100. Attempts left: 7
-  guess=  40 -> ['Too low! Go HIGHER.']  | attempts=2 score=-10 status=playing | Guess a number between 1 and 100. Attempts left: 6
-  guess=   9 -> ['Too low! Go HIGHER.']  | attempts=3 score=-15 status=playing | Guess a number between 1 and 100. Attempts left: 5
-  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 55. Click New Game to play again.']  | attempts=4 score=55 status=won | Guess a number between 1 and 100. Attempts left: 4
+  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  40 -> ['Too low! Go HIGHER.']  | attempts=2 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 6
+  guess=   9 -> ['Too low! Go HIGHER.']  | attempts=3 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 5
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 70. Click New Game to play again.']  | attempts=4 score=70 status=won | Guess a number between 1 and 100. Attempts left: 4
 Game 2: Normal, secret=50, win on 2nd guess
-  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=-5 status=playing | Guess a number between 1 and 100. Attempts left: 7
-  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 85. Click New Game to play again.']  | attempts=2 score=85 status=won | Guess a number between 1 and 100. Attempts left: 6
+  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 90. Click New Game to play again.']  | attempts=2 score=90 status=won | Guess a number between 1 and 100. Attempts left: 6
   click New Game ->
   after New Game: status=playing attempts=0 score=0 history=[]
   messages: []

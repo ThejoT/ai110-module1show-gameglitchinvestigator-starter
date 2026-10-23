@@ -78,7 +78,7 @@ def update_score(current_score: int, outcome: str, attempt_number: int) -> int:
     Update score based on outcome and which attempt this was (1 = first guess).
 
     A win is worth 100 on the first try, minus 10 per extra attempt (minimum 10).
-    Every wrong guess costs 5 points.
+    Every wrong guess costs 5 points, but the score never drops below 0.
     """
     if outcome == "Win":
         # FIX: was 100 - 10 * (attempt_number + 1), which docked points twice.
@@ -87,6 +87,8 @@ def update_score(current_score: int, outcome: str, attempt_number: int) -> int:
 
     # FIX: wrong "Too High" guesses used to *earn* +5 on even attempts.
     if outcome in ("Too High", "Too Low"):
-        return current_score - 5
+        # FIX (my change): Claude's version let the score go negative (e.g. -30 after
+        # a lost game). I floored it at 0 so a bad round doesn't feel like a punishment.
+        return max(0, current_score - 5)
 
     return current_score

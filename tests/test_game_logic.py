@@ -57,8 +57,13 @@ def test_string_secret_is_compared_as_a_number():
 # ----- Bug 5: scoring ------------------------------------------------------- #
 def test_wrong_guess_always_loses_points():
     for attempt in range(1, 9):
-        assert update_score(0, "Too High", attempt) == -5
-        assert update_score(0, "Too Low", attempt) == -5
+        assert update_score(50, "Too High", attempt) == 45
+        assert update_score(50, "Too Low", attempt) == 45
+
+
+def test_score_never_goes_below_zero():
+    assert update_score(0, "Too High", 1) == 0
+    assert update_score(3, "Too Low", 2) == 0
 
 
 def test_first_try_win_is_worth_100():

@@ -6,7 +6,7 @@
 
 ## Test Generation (SF7)
 
-I used Claude to help generate edge-case tests for `parse_guess()` and `check_guess()` in `logic_utils.py`. All tests are in `tests/test_game_logic.py`, and all 22 tests pass (see `test_results.txt` and the README).
+I used Claude to help generate edge-case tests for `parse_guess()` and `check_guess()` in `logic_utils.py`. All tests are in `tests/test_game_logic.py`, and all 23 tests pass (see `test_results.txt` and the README).
 
 **Prompt used:** I gave Claude the full project instructions and grading rubric and asked it to complete the project. For tests, the rubric's Challenge 1 requirement acted as the prompt:
 

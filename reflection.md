@@ -42,7 +42,7 @@ I used Claude as my AI coding assistant for this project. I gave it the project 
 
 **A correct AI suggestion:** Claude suggested deleting the even-attempt `str()` conversion completely and making `check_guess()` convert both values with `int()` before comparing, instead of keeping the `try/except` fallback. This was correct because the bug came from comparing text, and comparing numbers removes it at the source. I verified it with `test_single_digit_guess_is_too_low_not_text_compared` (`check_guess(9, 50) == "Too Low"`) and `test_string_secret_is_compared_as_a_number`. I also replayed the game: guessing 9 on attempt 3 now correctly shows "Too low! Go HIGHER." (see `game_trace_after.txt`).
 
-**An AI suggestion I did not accept as written:** The original `check_guess()` returned a tuple `(outcome, message)`, but the three starter tests expect only the outcome (`check_guess(50, 50) == "Win"`). One option was to keep the tuple and rewrite the starter tests to unpack it. I rejected that because the starter tests describe the intended behavior, and changing tests just to make them pass hides problems instead of fixing them. Instead, I had `check_guess()` return only the outcome and moved the messages into a separate `get_hint_message()` function. This also made the backwards-hint bug easier to fix and test on its own. I verified it by running all 3 starter tests unchanged alongside my new ones: 22 passed.
+**An AI suggestion I did not accept as written:** Claude's fixed `update_score()` subtracted 5 points for every wrong guess with no lower limit, so a player who lost a game on Easy could end with a score of −30. The math was correct, but I didn't like the result: a negative score feels like a punishment in a casual guessing game, and it was confusing to see a win on the fourth guess show "Final score: 55" because of the earlier penalties. I changed it to `max(0, current_score - 5)` so the score never drops below 0, and marked the change with a `# FIX (my change)` comment. I verified it by updating `test_wrong_guess_always_loses_points` to start from 50, adding `test_score_never_goes_below_zero`, and replaying the game: wrong guesses now leave the score at 0, and winning on the fourth guess shows "Final score: 70." All 23 tests pass.
 
 ---
 
@@ -50,12 +50,12 @@ I used Claude as my AI coding assistant for this project. I gave it the project 
 
 I tested iteratively, checking each fix as soon as it was made instead of waiting until the end. I decided a bug was really fixed only when two things were true: a pytest test targeting that exact bug passed, and the live game behaved correctly for the same input that broke it before. For the second part, I replayed the game with the secret fixed at 50, using the same inputs as my original bug trace, and compared [`bug_trace_before.txt`](bug_trace_before.txt) to [`game_trace_after.txt`](game_trace_after.txt). For example, guessing 60 used to say "Go HIGHER!" and now says "Too high! Go LOWER.", and clicking New Game after a win used to leave the game stuck, while now it resets to status "playing" with 0 attempts and a score of 0.
 
-One test that taught me something was `test_wrong_guess_always_loses_points`. It loops through attempts 1 to 8 and checks that every wrong guess costs exactly 5 points. Testing a single attempt would have missed the bug, because the old code only gave +5 on *even* attempts. This showed me that some bugs only appear on certain inputs, so a test should cover a range of values.
+One test that taught me something was `test_wrong_guess_always_loses_points`. It loops through attempts 1 to 8 and checks that every wrong guess costs exactly 5 points (starting from a score of 50). Testing a single attempt would have missed the bug, because the old code only gave +5 on *even* attempts. This showed me that some bugs only appear on certain inputs, so a test should cover a range of values.
 
 AI helped me design the tests by suggesting edge cases I hadn't thought of, such as decimals like "12.7" (which the old code silently truncated to 12), whitespace-only input and the exact range boundaries 1 and 100. The final run:
 
 ```
-22 passed in 0.05s
+23 passed in 0.04s
 ```
 
 Full output is in [`test_results.txt`](test_results.txt) and in the README.
