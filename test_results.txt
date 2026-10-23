@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.17, pytest-9.1.1, pluggy-1.7.0
+cachedir: .pytest_cache
+rootdir: C:\Users\saith\ai110-module1show-gameglitchinvestigator-starter
+plugins: platformdirs-4.12.4, anyio-4.15.1
+collecting ... collected 22 items
+
+tests/test_game_logic.py::test_winning_guess PASSED                      [  4%]
+tests/test_game_logic.py::test_guess_too_high PASSED                     [  9%]
+tests/test_game_logic.py::test_guess_too_low PASSED                      [ 13%]
+tests/test_game_logic.py::test_too_high_hint_tells_player_to_go_lower PASSED [ 18%]
+tests/test_game_logic.py::test_too_low_hint_tells_player_to_go_higher PASSED [ 22%]
+tests/test_game_logic.py::test_single_digit_guess_is_too_low_not_text_compared PASSED [ 27%]
+tests/test_game_logic.py::test_string_secret_is_compared_as_a_number PASSED [ 31%]
+tests/test_game_logic.py::test_wrong_guess_always_loses_points PASSED    [ 36%]
+tests/test_game_logic.py::test_first_try_win_is_worth_100 PASSED         [ 40%]
+tests/test_game_logic.py::test_win_points_never_drop_below_10 PASSED     [ 45%]
+tests/test_game_logic.py::test_hard_range_is_wider_than_normal PASSED    [ 50%]
+tests/test_game_logic.py::test_empty_input_is_rejected[] PASSED          [ 54%]
+tests/test_game_logic.py::test_empty_input_is_rejected[   ] PASSED       [ 59%]
+tests/test_game_logic.py::test_empty_input_is_rejected[None] PASSED      [ 63%]
+tests/test_game_logic.py::test_non_numeric_input_is_rejected[abc] PASSED [ 68%]
+tests/test_game_logic.py::test_non_numeric_input_is_rejected[12abc] PASSED [ 72%]
+tests/test_game_logic.py::test_non_numeric_input_is_rejected[ten] PASSED [ 77%]
+tests/test_game_logic.py::test_decimal_input_is_rejected_not_truncated PASSED [ 81%]
+tests/test_game_logic.py::test_negative_number_is_out_of_range PASSED    [ 86%]
+tests/test_game_logic.py::test_number_above_range_is_rejected PASSED     [ 90%]
+tests/test_game_logic.py::test_range_boundaries_are_accepted PASSED      [ 95%]
+tests/test_game_logic.py::test_surrounding_whitespace_is_ignored PASSED  [100%]
+
+============================== 22 passed in 0.05s ==============================

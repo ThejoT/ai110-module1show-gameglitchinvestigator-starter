@@ -1,0 +1,19 @@
+Game Glitch Investigator: trace of the FIXED game (same inputs as bug_trace_before.txt)
+(Streamlit strips emoji from messages in this trace.)
+
+Game 1: Normal, secret=50
+  start: Guess a number between 1 and 100. Attempts left: 8
+  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=-5 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  40 -> ['Too low! Go HIGHER.']  | attempts=2 score=-10 status=playing | Guess a number between 1 and 100. Attempts left: 6
+  guess=   9 -> ['Too low! Go HIGHER.']  | attempts=3 score=-15 status=playing | Guess a number between 1 and 100. Attempts left: 5
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 55. Click New Game to play again.']  | attempts=4 score=55 status=won | Guess a number between 1 and 100. Attempts left: 4
+Game 2: Normal, secret=50, win on 2nd guess
+  guess=  60 -> ['Too high! Go LOWER.']  | attempts=1 score=-5 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 85. Click New Game to play again.']  | attempts=2 score=85 status=won | Guess a number between 1 and 100. Attempts left: 6
+  click New Game ->
+  after New Game: status=playing attempts=0 score=0 history=[]
+  messages: []
+Game 3: invalid input
+  guess= abc -> ['That is not a whole number.']  | attempts=0 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 8
+Game 4: Hard difficulty range
+  sidebar: ['Range: 1 to 200', 'Attempts allowed: 5'] | main: Guess a number between 1 and 200. Attempts left: 5
