@@ -1,0 +1,28 @@
+Game Glitch Investigator: bug trace of the ORIGINAL starter code
+Played with a fixed secret (50) so results are reproducible.
+(Streamlit strips emoji from messages in this trace.)
+
+Game 1: Normal, secret=50
+  start: Guess a number between 1 and 100. Attempts left: 7
+  guess=  60 -> ['Go HIGHER!']  | attempts=2 score=5 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  40 -> ['Go LOWER!']  | attempts=3 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 6
+  guess=   9 -> ['Go HIGHER!']  | attempts=4 score=5 status=playing | Guess a number between 1 and 100. Attempts left: 5
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 45']  | attempts=5 score=45 status=won | Guess a number between 1 and 100. Attempts left: 4
+Game 2: Normal, secret=50, win on 2nd guess
+  guess=  60 -> ['Go HIGHER!']  | attempts=2 score=5 status=playing | Guess a number between 1 and 100. Attempts left: 7
+  guess=  50 -> ['Correct!', 'You won! The secret was 50. Final score: 65']  | attempts=3 score=65 status=won | Guess a number between 1 and 100. Attempts left: 6
+  click New Game ->
+  after New Game: status=won attempts=0 score=65 history=[60, 50]
+  messages: ['You already won. Start a new game to play again.']
+Game 3: invalid input
+  guess= abc -> ['That is not a number.']  | attempts=2 score=0 status=playing | Guess a number between 1 and 100. Attempts left: 7
+Game 4: Hard difficulty range
+  sidebar: ['Range: 1 to 50', 'Attempts allowed: 5'] | main: Guess a number between 1 and 100. Attempts left: 4
+
+Direct calls to the original logic functions:
+check_guess(60, 50)   -> ('Too High', '📈 Go HIGHER!')
+check_guess(40, 50)   -> ('Too Low', '📉 Go LOWER!')
+check_guess(9, '50')  -> ('Too High', '📈 Go HIGHER!')   # even attempt: secret is a str
+check_guess(100,'50') -> ('Too Low', '📉 Go LOWER!')
+update_score(0, 'Too High', 2) -> 5
+update_score(0, 'Win', 1)      -> 80  # first-try win
